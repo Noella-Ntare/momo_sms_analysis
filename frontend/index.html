@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MTN MoMo Analytics Dashboard</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="dashboard-container">
+        <!-- Header -->
+        <header class="dashboard-header">
+            <div class="header-content">
+                <div class="logo-section">
+                    <i class="fas fa-mobile-alt"></i>
+                    <h1>MTN MoMo Analytics</h1>
+                </div>
+                <div class="header-stats">
+                    <div class="stat-item">
+                        <span class="stat-value" id="totalTransactions">0</span>
+                        <span class="stat-label">Total Transactions</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-value" id="totalAmount">0 RWF</span>
+                        <span class="stat-label">Total Amount</span>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="dashboard-main">
+            <!-- Filters Section -->
+            <section class="filters-section">
+                <div class="filters-container">
+                    <div class="filter-group">
+                        <label for="searchInput">
+                            <i class="fas fa-search"></i>
+                            Search Transactions
+                        </label>
+                        <input type="text" id="searchInput" placeholder="Search by ID, amount, or description...">
+                    </div>
+                    
+                    <div class="filter-group">
+                        <label for="transactionType">Transaction Type</label>
+                        <select id="transactionType">
+                            <option value="all">All Types</option>
+                            <option value="incoming">Incoming Money</option>
+                            <option value="payment">Payments to Code Holders</option>
+                            <option value="transfer">Transfers to Mobile Numbers</option>
+                            <option value="bank_deposit">Bank Deposits</option>
+                            <option value="airtime">Airtime Bill Payments</option>
+                            <option value="cash_power">Cash Power Bill Payments</option>
+                            <option value="third_party">Third Party Transactions</option>
+                            <option value="withdrawal">Withdrawals from Agents</option>
+                            <option value="bank_transfer">Bank Transfers</option>
+                            <option value="bundle">Internet and Voice Bundles</option>
+                        </select>
+                    </div>
+                    
+                    <div class="filter-group">
+                        <label for="dateFrom">Date From</label>
+                        <input type="date" id="dateFrom">
+                    </div>
+                    
+                    <div class="filter-group">
+                        <label for="dateTo">Date To</label>
+                        <input type="date" id="dateTo">
+                    </div>
+                    
+                    <div class="filter-group">
+                        <label for="amountRange">Amount Range</label>
+                        <div class="amount-inputs">
+                            <input type="number" id="minAmount" placeholder="Min (RWF)">
+                            <input type="number" id="maxAmount" placeholder="Max (RWF)">
+                        </div>
+                    </div>
+                    
+                    <button id="applyFilters" class="btn-primary">
+                        <i class="fas fa-filter"></i>
+                        Apply Filters
+                    </button>
+                    
+                    <button id="clearFilters" class="btn-secondary">
+                        <i class="fas fa-times"></i>
+                        Clear
+                    </button>
+                </div>
+            </section>
+
+            <!-- Charts Section -->
+            <section class="charts-section">
+                <div class="charts-grid">
+                    <div class="chart-container">
+                        <div class="chart-header">
+                            <h3>Transaction Volume by Type</h3>
+                            <div class="chart-controls">
+                                <button class="chart-toggle active" data-chart="bar">Bar</button>
+                                <button class="chart-toggle" data-chart="pie">Pie</button>
+                            </div>
+                        </div>
+                        <canvas id="transactionTypeChart"></canvas>
+                    </div>
+                    
+                    <div class="chart-container">
+                        <div class="chart-header">
+                            <h3>Monthly Transaction Trends</h3>
+                        </div>
+                        <canvas id="monthlyTrendChart"></canvas>
+                    </div>
+                    
+                    <div class="chart-container">
+                        <div class="chart-header">
+                            <h3>Payment vs Deposit Distribution</h3>
+                        </div>
+                        <canvas id="paymentDepositChart"></canvas>
+                    </div>
+                    
+                    <div class="chart-container">
+                        <div class="chart-header">
+                            <h3>Transaction Amount Distribution</h3>
+                        </div>
+                        <canvas id="amountDistributionChart"></canvas>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Transaction Details Section -->
+            <section class="details-section">
+                <div class="section-header">
+                    <h2>Transaction Details</h2>
+                    <div class="pagination-info">
+                        <span id="paginationInfo">Showing 0 - 0 of 0 transactions</span>
+                    </div>
+                </div>
+                
+                <div class="table-container">
+                    <table id="transactionsTable">
+                        <thead>
+                            <tr>
+                                <th>Transaction ID</th>
+                                <th>Type</th>
+                                <th>Amount (RWF)</th>
+                                <th>Date</th>
+                                <th>Description</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="transactionsTableBody">
+                        </tbody>
+                    </table>
+                </div>
+                
+                <div class="pagination-controls">
+                    <button id="prevPage" class="btn-secondary">
+                        <i class="fas fa-chevron-left"></i>
+                        Previous
+                    </button>
+                    <div class="page-numbers" id="pageNumbers"></div>
+                    <button id="nextPage" class="btn-secondary">
+                        Next
+                        <i class="fas fa-chevron-right"></i>
+                    </button>
+                </div>
+            </section>
+        </main>
+
+        <!-- Transaction Detail Modal -->
+        <div id="transactionModal" class="modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3>Transaction Details</h3>
+                    <button class="modal-close" id="closeModal">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <div class="modal-body" id="modalBody">
+                </div>
+            </div>
+        </div>
+
+        <!-- Loading Spinner -->
+        <div id="loadingSpinner" class="loading-spinner">
+            <div class="spinner"></div>
+            <p>Loading transaction data...</p>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
