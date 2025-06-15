@@ -138,19 +138,24 @@ function hideLoading() {
 
 function loadTransactionData() {
     showLoading();
-    
-    // Simulate API call delay
-    setTimeout(() => {
-        // Generate more mock data for better demonstration
-        const additionalMockData = generateMockData(100);
-        currentTransactions = [...MOCK_TRANSACTIONS, ...additionalMockData];
-        filteredTransactions = [...currentTransactions];
-        
-        updateDashboard();
-        hideLoading();
-    }, 1000);
+
+    fetch('data/cleaned_data.json')
+        .then(response => response.json())
+        .then(data => {
+            currentTransactions = data;
+            filteredTransactions = [...currentTransactions];
+            updateDashboard();
+            hideLoading();
+        })
+        .catch(error => {
+            console.error('Error loading transaction data:', error);
+            hideLoading();
+        });
 }
 
+    
+   
 function generateMockData(count) {
     const types = ['incoming', 'payment', 'transfer', 'bank_deposit', 'airtime',]
 }
+
