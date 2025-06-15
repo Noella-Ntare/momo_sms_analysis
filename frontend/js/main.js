@@ -1,57 +1,29 @@
 // Mock data for demonstration - Replace with actual API calls
-const MOCK_TRANSACTIONS = [
-    {
-        id: "123456",
-        type: "incoming",
-        amount: 5000,
-        date: "2024-01-01T10:00:00",
-        description: "You have received 5000 RWF from John Doe",
-        sender: "John Doe",
-        fee: 0
-    },
-    {
-        id: "789012",
-        type: "payment",
-        amount: -1500,
-        date: "2024-01-02T14:30:00",
-        description: "Your payment of 1500 RWF to Jane Smith has been completed",
-        recipient: "Jane Smith",
-        fee: 25
-    },
-    {
-        id: "345678",
-        type: "airtime",
-        amount: -3000,
-        date: "2024-01-03T16:00:00",
-        description: "Your payment of 3000 RWF to Airtime has been completed",
-        fee: 50
-    },
-    {
-        id: "456789",
-        type: "withdrawal",
-        amount: -20000,
-        date: "2024-01-04T12:00:00",
-        description: "You have withdrawn 20000 RWF via agent: Jane Doe",
-        agent: "Jane Doe (250123456789)",
-        fee: 100
-    },
-    {
-        id: "567890",
-        type: "bundle",
-        amount: -2000,
-        date: "2024-01-05T09:00:00",
-        description: "You have purchased an internet bundle of 1GB for 2000 RWF",
-        bundle_type: "1GB Internet",
-        validity: "30 days",
-        fee: 0
-    }
-];
-
-// Global state
-let currentTransactions = [...MOCK_TRANSACTIONS];
-let filteredTransactions = [...MOCK_TRANSACTIONS];
+let currentTransactions = [];
+let filteredTransactions = [];
 let currentPage = 1;
 let itemsPerPage = 10;
+
+document.addEventListener('DOMContentLoaded', function () {
+    fetchTransactions();
+    initializeEventListeners();
+});
+
+function fetchTransactions() {
+    fetch('transactions.json')
+        .then(response => response.json())
+        .then(data => {
+            currentTransactions = data;
+            filteredTransactions = [...data];
+            updateDashboard(); // this populates totals, charts, tables
+        })
+        .catch(error => {
+            console.error("Error loading transactions:", error);
+        });
+}
+
+
+// Global state
 let charts = {};
 
 // DOM elements

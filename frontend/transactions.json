@@ -1,0 +1,20 @@
+[
+  {
+    "id": "001",
+    "type": "incoming",
+    "amount": 10000,
+    "date": "2024-06-01T10:00:00",
+    "description": "You received 10000 RWF from John",
+    "sender": "John",
+    "fee": 0
+  },
+  {
+    "id": "002",
+    "type": "withdrawal",
+    "amount": -5000,
+    "date": "2024-06-02T15:00:00",
+    "description": "Withdrawn 5000 RWF via agent",
+    "agent": "Agent XYZ",
+    "fee": 100
+  }
+]
